@@ -8,7 +8,8 @@ GO_PKG					:= go-command-map
 GO_CMD					?= $(GO_PKG)
 GO_SRC_PATH			:= /go/src
 GO_PKG_PATH			:= $(GO_SRC_PATH)/github.com/bmo-tv/$(GO_PKG)
-GO_IMAGE				:= wpengine/golang
+GO_IMAGE				:= golang
+GO_VERSION			:= alpine
 GO_PKG_FLAG			:= $(GO_PKG)_$(OS)_$(ARCH)
 
 DOCKER_COMMAND	:= docker run -it --rm \
@@ -16,7 +17,7 @@ DOCKER_COMMAND	:= docker run -it --rm \
 	-e CURRENT_GROUP_ID=$(CURRENT_GROUP) \
 	-v $(PWD):$(GO_PKG_PATH) \
 	-w $(GO_PKG_PATH) \
-	wpengine/golang
+	$(GO_IMAGE):$(GO_VERSION)
 
 all: clean test build
 
@@ -28,7 +29,7 @@ go-build-%:
 		'GOOS=$(OS) \
 		go build -o $(GO_PKG_PATH)/bin/$* ./src/... && \
 		chown -R $$CURRENT_USER_ID:$$CURRENT_GROUP_ID $(GO_PKG_PATH)/bin'
-		
+
 go-install-%:
 	if [ -f ./bin/$* ]; then \
 		cp ./bin/$* /usr/local/bin/$(GO_CMD); \
